@@ -1,5 +1,5 @@
 #include <string.h>
-#include <kernel/kprint.h>
+#include <kprint.h>
 
 static int printd(int value, int base);
 static int printsz(const char * string);

@@ -1,6 +1,6 @@
 #include <common.h>
 #include <string.h>
-#include <kernel/kprint.h>
+#include <kprint.h>
 
 static unsigned int vga_row = 0, vga_col = 0;
 

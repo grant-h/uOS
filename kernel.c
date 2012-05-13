@@ -1,7 +1,7 @@
 #include <common.h>
 #include <string.h>
 #include <boot/multiboot.h>
-#include <kernel/kprint.h>
+#include <kprint.h>
 #include <isr.h>
 
 void kmain(void* mbd, unsigned int magic)
