@@ -12,6 +12,7 @@ void panic_exception(registers_t reg)
   printf("Fault occured at EIP 0x%x, CS 0x%x\n", reg.eip, reg.cs);
 
   printf("Halting...");
+
   for(;;) 
     halt();
 }
