@@ -1,6 +1,6 @@
 #include <common.h>
 #include <kerror.h>
-#include <string.h>
+#include <print.h>
 #include <isr.h>
 #include <gdt.h>
 #include <idt.h>

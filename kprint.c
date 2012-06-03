@@ -1,3 +1,7 @@
+/*
+ * Defines basic VGA text manipulation routines.
+ */
+
 #include <common.h>
 #include <string.h>
 #include <kprint.h>
@@ -7,7 +11,7 @@ static unsigned int vga_row = 0, vga_col = 0;
 void update_vga_cursor()
 {
   unsigned short pos = vga_row*COLUMNS + vga_col;
-  //do out byte
+  //TODO do out byte
   pos = pos;
 
 }
@@ -37,7 +41,7 @@ void kputc(unsigned char c)
 
     vga_col++;
     if(vga_col == COLUMNS)
-      kputc('\n'); //possible? reenterant?
+      kputc('\n'); //possible? reentrant?
   }
 }
 

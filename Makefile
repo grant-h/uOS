@@ -5,10 +5,11 @@ ASM=nasm
 LINKING_INFO=linker.ld
 
 ASMFLAGS=-f elf
-LDFLAGS=-T $(LINKING_INFO) 
+LDFLAGS=-T $(LINKING_INFO)
+#-lgcc used for 64 operations
 CFLAGS=-I$(CURDIR) -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
 
-CSRC=kernel.o kprint.o assembly.o string.o gdt.o idt.o isr.o kerror.o
+CSRC=kernel.o kprint.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(SOURCES)

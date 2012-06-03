@@ -1,6 +1,6 @@
 #include <kerror.h>
 #include <assembly.h>
-#include <string.h>
+#include <print.h>
 
 void panic_exception(registers_t reg)
 {
