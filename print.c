@@ -359,7 +359,7 @@ int prints(char ** out, const char * string, int32 width, int32 flags)
 int printi(char ** out, int64 num, int32 base, int32 sign, int32 width, int32 flags, char convbase)
 {
   int32 cw = 0, neg = FALSE;
-  uint32 u;
+  uint64 u;
   char buffer[PRINT_BUF_LEN] = {0}; //longest representation (base 2, 64 bits)
   char * iter;
 

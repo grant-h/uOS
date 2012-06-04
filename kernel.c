@@ -6,7 +6,18 @@
 
 void kmain(void* mbd, unsigned int magic)
 {
-  clear_screen();
+  //init_desc_tables(); //get exception handling up quickly!
+
+/*
+  kputc('a');
+  kputc('a');
+  kputc('a');
+  kputc('a');
+  kputc('a');
+  kputc('a');*/
+  *((int*)0xb8000)=0x07690748;
+  //clear_screen();
+  int bye = 1 / 0;
 
   for(;;) ;
 
@@ -17,7 +28,6 @@ void kmain(void* mbd, unsigned int magic)
     return;
   }
 
-  init_desc_tables(); //get exception handling up quickly!
 
   printf("[TestKernel INIT]\n\nVideo memory: 0x%x\n", VID_MEM);
   printf("Using standard 80x25 vga text mode\n");
