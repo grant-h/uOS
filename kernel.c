@@ -6,20 +6,9 @@
 
 void kmain(void* mbd, unsigned int magic)
 {
-  //init_desc_tables(); //get exception handling up quickly!
+  init_desc_tables(); //get exception handling up quickly!
 
-/*
-  kputc('a');
-  kputc('a');
-  kputc('a');
-  kputc('a');
-  kputc('a');
-  kputc('a');*/
-  *((int*)0xb8000)=0x07690748;
-  //clear_screen();
-  int bye = 1 / 0;
-
-  for(;;) ;
+  clear_screen();
 
   if(magic != MULTIBOOT_BOOTLOADER_MAGIC)
   {
@@ -29,7 +18,7 @@ void kmain(void* mbd, unsigned int magic)
   }
 
 
-  printf("[TestKernel INIT]\n\nVideo memory: 0x%x\n", VID_MEM);
+  printf("[TestKernel INIT]\n\nVideo memory: %p\n", VID_MEM);
   printf("Using standard 80x25 vga text mode\n");
   
   struct multiboot_info * mbi = (struct multiboot_info *)mbd; //initialize our multiboot information structure
@@ -44,14 +33,14 @@ void kmain(void* mbd, unsigned int magic)
   {
     unsigned int * mem_info_ptr = (unsigned int *)mbi->mmap_addr; 
 
+    printf("GRUB Memory Map\n");
+
     while(mem_info_ptr < (unsigned int *)mbi->mmap_addr+mbi->mmap_length)
     {
       multiboot_memory_map_t * cur = (multiboot_memory_map_t *)mem_info_ptr;   
 
-      unsigned int addr_low = cur->addr & 0xFFFFFFFF;
-      unsigned int len_low = cur->len & 0xFFFFFFFF;
-
-      printf("0x%x - 0x%x    %s,  ", addr_low, addr_low+len_low, cur->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVAIL" : "RESV");
+      if(cur->len > 0)
+        printf("  [%p-%p %5s]\n", (uint32)cur->addr, (uint32)(cur->addr+cur->len), cur->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVAIL" : "RESVD");
 
       mem_info_ptr += cur->size + sizeof(cur->size);
     }

@@ -8,13 +8,15 @@ MEMINFO     equ  1<<1                   ; provide memory map
 FLAGS       equ  MODULEALIGN | MEMINFO  ; this is the Multiboot 'flag' field
 MAGIC       equ    0x1BADB002           ; 'magic number' lets bootloader find the header
 CHECKSUM    equ -(MAGIC + FLAGS)        ; checksum required
- 
-section .text
+
+section .__mbHeader ;this may save my ass from GRUB error 13
  
 align 4
     dd MAGIC
     dd FLAGS
     dd CHECKSUM
+
+section .text
  
 ; reserve initial kernel stack space
 STACKSIZE equ 0x4000                    ; that's 16k.
