@@ -9,8 +9,8 @@ void isr_handler(registers_t regs)
 {
   int int_no = regs.int_no;
 
-  if(int_no <= 18) //an exception has occured, panic!
-    panic_exception(regs);
+  if(int_no <= 19) //an exception has occured, panic!
+    handle_exception(regs);
   else
     printf("[INFO] Unhandled interrupt %d\n", int_no);
 }

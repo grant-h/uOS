@@ -1,14 +1,18 @@
 #include <common.h>
 #include <print.h>
 #include <boot/multiboot.h>
+#include <kerror.h>
 #include <kprint.h>
 #include <isr.h>
 
+void banner();
+
 void kmain(void* mbd, unsigned int magic)
 {
-  init_desc_tables(); //get exception handling up quickly!
-
   clear_screen();
+  banner();
+
+  init_desc_tables(); //get exception handling up quickly!
 
   if(magic != MULTIBOOT_BOOTLOADER_MAGIC)
   {
@@ -18,7 +22,6 @@ void kmain(void* mbd, unsigned int magic)
   }
 
 
-  printf("[TestKernel INIT]\n\nVideo memory: %p\n", VID_MEM);
   printf("Using standard 80x25 vga text mode\n");
   
   struct multiboot_info * mbi = (struct multiboot_info *)mbd; //initialize our multiboot information structure
@@ -45,5 +48,20 @@ void kmain(void* mbd, unsigned int magic)
       mem_info_ptr += cur->size + sizeof(cur->size);
     }
   }
-  //asm volatile ("int $8");  
+
+
+}
+
+void banner()
+{
+  printf("            ____  _____\n");
+  printf("     __  __/ __ \\/ ___/\n");
+  printf("    / / / / / / /\\___ \\\n");
+  printf("   / /_/ / /_/ /____/ /\n");
+  printf("  / ____/\\____/______/\n");
+  printf(" / /\n");
+  printf("/_/  Micro Operating System\n");
+  printf("        By Grant Hernandez\n");
+  
+  printf("\nBuilt on %s at %s\n\n", __DATE__, __TIME__);
 }
