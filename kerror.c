@@ -51,7 +51,7 @@ void panic()
 {
   clear_interupts();
 
-  printf("[KERNEL PANIC] Stop drop and roll!\n");
+  printf("[PANIC] Stop drop and roll!\n");
   printf("Halting system...\n");
 
   for(;;)

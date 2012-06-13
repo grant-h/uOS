@@ -1,13 +1,11 @@
 #include <print.h>
 #include <common.h>
-#include <kprint.h>
 
 /*
  * Internal definitions
  */
 
 #define ISDIGIT(x) ((x) >= '0' && (x) <= '9')
-
 #define PRINT_BUF_LEN 65
 
 //Flags
@@ -68,20 +66,22 @@ int sprintf(char * buf, const char * fmt, ...)
  * Internal function definitions
  */
 
-int outchar(char ** out, char c)
+static int outchar(char ** out, char c)
 {
+  extern void vga_kputc(unsigned char);
+
   if (out)
   {
     **out = c;
     (*out)++;
   }
   else
-    kputc(c);
+    vga_kputc(c);
 
   return 1;
 }
 
-int print(char ** out, const char * fmt, va_list args)
+static int print(char ** out, const char * fmt, va_list args)
 {
   int32 cw = 0;
 
@@ -276,7 +276,7 @@ int print(char ** out, const char * fmt, va_list args)
   return cw;
 }
 
-int prints(char ** out, const char * string, int32 width, int32 flags)
+static int prints(char ** out, const char * string, int32 width, int32 flags)
 {
   int32 cw = 0, len = 0; 
   char padc = ' ';
@@ -356,7 +356,7 @@ int prints(char ** out, const char * string, int32 width, int32 flags)
   return cw;
 }
 
-int printi(char ** out, int64 num, int32 base, int32 sign, int32 width, int32 flags, char convbase)
+static int printi(char ** out, int64 num, int32 base, int32 sign, int32 width, int32 flags, char convbase)
 {
   int32 cw = 0, neg = FALSE;
   uint64 u;

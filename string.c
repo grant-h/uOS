@@ -1,5 +1,4 @@
 #include <string.h>
-#include <kprint.h>
 
 void * memcpy(void * dst, void * src, unsigned int size)
 {

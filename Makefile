@@ -7,9 +7,9 @@ LINKING_INFO=linker.ld
 
 ASMFLAGS=-f elf
 LDFLAGS=-g -T $(LINKING_INFO) -Map kernel.map
-CFLAGS=-I$(CURDIR) -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
+CFLAGS=-I$(CURDIR)/include/ -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
 
-CSRC=kernel.o kprint.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o
+CSRC=kernel.o vga.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(SOURCES)

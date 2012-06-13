@@ -1,2 +1,2 @@
 #!/bin/sh
-qemu -kernel kernel.bin
+qemu-kvm -kernel kernel.bin
