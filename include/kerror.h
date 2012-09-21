@@ -1,16 +1,15 @@
 #ifndef KERROR_H
 #define KERROR_H
 
-#include <common.h>
+#include <assembly.h>
 
 #define ASSERT(cond) \
 if(!(cond)) { \
-  printf("Assertion failed at %s:%d\n", __FILE__, __LINE__); \
-  panic(); \
+  panic("Assertion failed in %s, %s() at line %d", __FILE__, __func__, __LINE__); \
 }
         
-void panic();
-void handle_exception(registers_t reg);
-void panic_exception(registers_t reg);
+void panic(char * reason, ...);
+void handle_exception(struct registers reg);
+void panic_exception(struct registers reg);
 
 #endif

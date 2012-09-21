@@ -19,12 +19,12 @@ unsigned short inw(unsigned short port)
    return ret;
 }
 
-inline void clear_interupts()
+inline void disable_interupts()
 {
   asm volatile("cli");
 }
 
-inline void restore_interupts()
+inline void enable_interupts()
 {
   asm volatile("sti");
 }

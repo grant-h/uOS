@@ -1,5 +1,6 @@
 #include <idt.h>
 #include <string.h>
+#include <irq.h>
 
 extern void idt_flush(unsigned int);
 
@@ -40,6 +41,22 @@ extern void isr28();
 extern void isr29();
 extern void isr30();
 extern void isr31();
+extern void irq0();
+extern void irq1();
+extern void irq2();
+extern void irq3();
+extern void irq4();
+extern void irq5();
+extern void irq6();
+extern void irq7();
+extern void irq8();
+extern void irq9();
+extern void irq10();
+extern void irq11();
+extern void irq12();
+extern void irq13();
+extern void irq14();
+extern void irq15();
 
 //FIXME: there must be a better way!
 
@@ -83,6 +100,23 @@ void init_idt()
    idt_set_gate(29, (unsigned int)isr29, 0x08, 0x8E);
    idt_set_gate(30, (unsigned int)isr30, 0x08, 0x8E);
    idt_set_gate(31, (unsigned int)isr31, 0x08, 0x8E);
+
+   idt_set_gate( IRQ0, (unsigned int)irq0 , 0x08, 0x8E);
+   idt_set_gate( IRQ1, (unsigned int)irq1 , 0x08, 0x8E);
+   idt_set_gate( IRQ2, (unsigned int)irq2 , 0x08, 0x8E);
+   idt_set_gate( IRQ3, (unsigned int)irq3 , 0x08, 0x8E);
+   idt_set_gate( IRQ4, (unsigned int)irq4 , 0x08, 0x8E);
+   idt_set_gate( IRQ5, (unsigned int)irq5 , 0x08, 0x8E);
+   idt_set_gate( IRQ6, (unsigned int)irq6 , 0x08, 0x8E);
+   idt_set_gate( IRQ7, (unsigned int)irq7 , 0x08, 0x8E);
+   idt_set_gate( IRQ8, (unsigned int)irq8 , 0x08, 0x8E);
+   idt_set_gate( IRQ9, (unsigned int)irq9 , 0x08, 0x8E);
+   idt_set_gate(IRQ10, (unsigned int)irq10, 0x08, 0x8E);
+   idt_set_gate(IRQ11, (unsigned int)irq11, 0x08, 0x8E);
+   idt_set_gate(IRQ12, (unsigned int)irq12, 0x08, 0x8E);
+   idt_set_gate(IRQ13, (unsigned int)irq13, 0x08, 0x8E);
+   idt_set_gate(IRQ14, (unsigned int)irq14, 0x08, 0x8E);
+   idt_set_gate(IRQ15, (unsigned int)irq15, 0x08, 0x8E);
 
    idt_flush((unsigned int)&idt_ptr);
 }

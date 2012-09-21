@@ -1,14 +1,15 @@
 #include <irq.h>
+#include <i8259.h>
+#include <print.h>
+#include <kerror.h>
 
-void irq_map_isr(uint32 irq, uint32 isr)
+// This gets called from our ASM interrupt handler stub.
+void irq_handler(struct registers regs)
 {
-  ASSERT(irq >= 0 && irq <= 15);
-  ASSERT(isr >= 0 && isr <= 255);
+  ASSERT(regs.int_no >= IRQ_BASE);
 
-  if(irq > 7) //slave
-  {
-  }
-  else //master
-  {
-  }
-}
+  printf("IRQ%d\n", regs.int_no);
+
+  unsigned char irq_num = regs.int_no - IRQ_BASE; //IRQ_BASE is the start interrupt number of the IRQs
+  pic_send_eoi(irq_num);
+} 

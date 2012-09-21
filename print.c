@@ -47,6 +47,20 @@ int printf(const char * fmt, ...)
   return cw;
 }
 
+int vprintf(const char * fmt, va_list args)
+{
+  if (!fmt || !args)
+    return 0;
+
+  va_list list = args;
+
+  int32 cw = print(NULL, fmt, list);
+
+  va_end(list);
+
+  return cw;
+}
+
 int sprintf(char * buf, const char * fmt, ...)
 {
   if (!fmt || !buf)
@@ -54,6 +68,20 @@ int sprintf(char * buf, const char * fmt, ...)
 
   va_list list;
   va_start(list, fmt);
+
+  int32 cw = print(&buf, fmt, list);
+
+  va_end(list);
+
+  return cw;
+}
+
+int vsprintf(char * buf, const char * fmt, va_list args)
+{
+  if (!fmt || !buf || !args)
+    return 0;
+
+  va_list list = args;
 
   int32 cw = print(&buf, fmt, list);
 

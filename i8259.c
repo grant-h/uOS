@@ -29,7 +29,7 @@
 
 void pic_send_eoi(unsigned char irq)
 {
-  if(irq >= 7)
+  if(irq >= 8)
     outb(PIC_SLAVE_CMD, PIC_EOI);
   
   outb(PIC_MASTER_CMD, PIC_EOI);
@@ -39,8 +39,8 @@ void pic_init()
 {
   unsigned char a1, a2;
 
-  a1 = inb(PIC_MASTER_DATA);                        // save masks
-  a2 = inb(PIC_SLAVE_DATA);
+  //a1 = inb(PIC_MASTER_DATA);                        // save masks
+  //a2 = inb(PIC_SLAVE_DATA);
 
   outb(PIC_MASTER_CMD, ICW1_INIT+ICW1_ICW4);  // starts the initialization sequence (in cascade mode)
   outb(PIC_SLAVE_CMD, ICW1_INIT+ICW1_ICW4);
@@ -52,8 +52,10 @@ void pic_init()
   outb(PIC_MASTER_DATA, ICW4_8086);        // ICW4: 8086 extra hint
   outb(PIC_SLAVE_DATA, ICW4_8086);
 
-  outb(PIC_MASTER_DATA, a1);   // restore saved masks.
-  outb(PIC_SLAVE_DATA, a2);
+  outb(PIC_MASTER_DATA, 0);
+  outb(PIC_SLAVE_DATA, 0);
+
+  printf("i8259 init completion\n"); 
 }
 
 void pic_mask_irq(unsigned char irq)

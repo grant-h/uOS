@@ -1,5 +1,4 @@
 #include <kerror.h>
-#include <assembly.h>
 #include <print.h>
 
 enum exception_codes
@@ -47,18 +46,23 @@ char * exception_strings[] = { "Divide Error",
                                "Machine Check",
                                "SIMD Floating-Point Exception" };
 
-void panic()
+void panic(char * reason, ...)
 {
-  clear_interupts();
+  disable_interupts();
 
-  printf("[PANIC] Stop drop and roll!\n");
-  printf("Halting system...\n");
+  va_list args;
+  char buf[256]; //FIXME: still a hack...
+  
+  va_start(args, reason);
+  printf("[PANIC] Halt and catch fire\n");
+  sprintf(buf, "Reason: %s\n", reason);
+  vprintf(buf, args);
 
   for(;;)
     halt();
 }
 
-void handle_exception(registers_t reg)
+void handle_exception(struct registers reg)
 {
   int exCode = reg.int_no;
 
@@ -114,14 +118,14 @@ void handle_exception(registers_t reg)
 }
 
 
-void panic_exception(registers_t reg)
+void panic_exception(struct registers reg)
 {
-  clear_interupts();
+  disable_interupts();
 
   printf("[PANIC] Due to an unrecoverable exception\n\n");
   printf("Exception details:\n");
   printf("Panic called from ISR%d with error code %d\n", reg.int_no, reg.err_code);
-  printf("Fault occured at EIP 0x%x, CS 0x%x\n", reg.eip, reg.cs);
+  printf("Fault occured at EIP %p, CS %p\n", reg.eip, reg.cs);
 
   printf("Halting...");
 

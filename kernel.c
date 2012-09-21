@@ -4,6 +4,8 @@
 #include <kerror.h>
 #include <vga.h>
 #include <isr.h>
+#include <pit.h>
+#include <i8259.h>
 
 void banner();
 
@@ -16,9 +18,9 @@ void kmain(void* mbd, unsigned int magic)
 
   if(magic != MULTIBOOT_BOOTLOADER_MAGIC)
   {
-    printf("Kernel was not loaded using a multiboot compliant bootloader. Cannot continue" \
+    panic("Kernel was not loaded using a multiboot compliant bootloader. Cannot continue" \
            " reliably without multiboot information. Halting...\n");
-    return;
+    return; //never reached
   }
 
 
@@ -49,7 +51,12 @@ void kmain(void* mbd, unsigned int magic)
     }
   }
 
+  pic_init();
+  init_pit(10);
+  enable_interupts(); //hardware interupts are now enabled
 
+  for(;;)
+    halt();
 }
 
 void banner()

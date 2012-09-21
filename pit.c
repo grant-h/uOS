@@ -18,5 +18,5 @@ void init_pit(uint32 freq)
   outb(0x40, l);
   outb(0x40, h);
 
-  printf("PIT frequency %d Hz\n", freq);
+  printf("PIT frequency %d Hz (divisor %d)\n", freq, divisor);
 }
