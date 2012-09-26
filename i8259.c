@@ -54,8 +54,6 @@ void pic_init()
 
   outb(PIC_MASTER_DATA, 0);
   outb(PIC_SLAVE_DATA, 0);
-
-  printf("i8259 init completion\n"); 
 }
 
 void pic_mask_irq(unsigned char irq)

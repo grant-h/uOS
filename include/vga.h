@@ -30,5 +30,6 @@ void vga_init();
 void vga_set_color(vga_color_t fg, vga_color_t bg);
 void vga_get_color(vga_color_t * fg, vga_color_t * bg);
 void vga_kputc(unsigned char c);
+void random_screen();
 
 #endif

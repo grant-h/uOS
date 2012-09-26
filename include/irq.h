@@ -5,6 +5,7 @@
 #include <assembly.h>
 
 #define IRQ_BASE 32
+#define IRQ_AMOUNT 16
 
 enum irq_vectors
 {
@@ -14,5 +15,7 @@ IRQ12, IRQ13, IRQ14, IRQ15
 };
 
 void irq_handler(struct registers regs);
+void register_irq_handler(uint32 irq, void (*handler)(struct registers));
+void unregister_irq_handler(uint32 irq);
 
 #endif

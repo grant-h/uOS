@@ -52,8 +52,9 @@ void kmain(void* mbd, unsigned int magic)
   }
 
   pic_init();
-  init_pit(10);
+  init_pit(100);
   enable_interupts(); //hardware interupts are now enabled
+  random_screen();
 
   for(;;)
     halt();

@@ -7,6 +7,7 @@
 #include <print.h>
 #include <vga.h>
 #include <kerror.h>
+#include <pit.h>
 
 #define VID_MEM 0xb8000
 #define COLUMNS 80
@@ -134,5 +135,33 @@ void scroll_up()
   {
     vga_row--;
     update_cursor();
+  }
+}
+
+uint32 randChar()
+{
+  static unsigned int seed = 120939;
+  seed *= 3;
+  seed ^= get_tick_count();
+
+  return seed % 256;
+}
+
+void random_screen()
+{
+  unsigned char * writePos = (unsigned char *)VID_MEM;
+
+  for(;;)
+  {
+    int row, i;
+
+    for(row = 0; row < ROWS; row++)
+    {
+      for(i = 0; i < BYTES_PER_ROW; i++)
+      {
+        writePos[i+row*BYTES_PER_ROW] = randChar();
+      }
+    }
+
   }
 }
