@@ -8,8 +8,9 @@
 #include <i8259.h>
 
 void banner();
+void print_multiboot(void * mbInfo);
 
-void kmain(void* mbd, unsigned int magic)
+void kmain(void * mbd, unsigned int magic)
 {
   vga_init(); 
   banner();
@@ -25,8 +26,47 @@ void kmain(void* mbd, unsigned int magic)
 
 
   printf("Using standard 80x25 vga text mode\n");
+  print_multiboot(mbd);
+
+  pic_init();
+  init_pit(100);
+  enable_interupts(); //hardware interupts are now enabled
+
+  for(;;)
+    halt();
+}
+
+void banner()
+{
+  //this color setting interface is cumbersome
+  //for my application, it would be better if 
+  //color codes were inline with the text, such
+  //as traditional terminal coloring schemes
+  vga_set_color(COLOR_LRED, COLOR_DONTCARE);
+  printf("              ____  _____\n");
+  printf("       __  __/ __ \\/ ___/\n");
+  printf("      / / / / / / /\\___ \\\n");
+  printf("     / /_/ / /_/ /____/ /\n");
+  printf("    / ____/\\____/______/\n");
+  printf("   / /\n");
+  printf("  /_/  Micro Operating System\n");
+  vga_set_color(COLOR_GREEN, COLOR_DONTCARE);
+  printf("          By Grant Hernandez\n");
   
-  struct multiboot_info * mbi = (struct multiboot_info *)mbd; //initialize our multiboot information structure
+  vga_set_color(COLOR_WHITE, COLOR_DONTCARE);
+  printf("\nBuilt on %s at %s\n\n", __DATE__, __TIME__);
+  vga_set_color(COLOR_LGREY, COLOR_DONTCARE);
+}
+
+void print_multiboot(void * mbInfo)
+{
+  struct multiboot_info * mbi = (struct multiboot_info *)mbInfo;
+   
+  if(mbi == NULL)
+  {
+    printf("No multiboot information!\n");
+    return;
+  }
 
   if(mbi->flags & MULTIBOOT_INFO_MEMORY)
   {
@@ -38,7 +78,7 @@ void kmain(void* mbd, unsigned int magic)
   {
     unsigned int * mem_info_ptr = (unsigned int *)mbi->mmap_addr; 
 
-    printf("GRUB Memory Map\n");
+    printf("Tentative Memory Map\n");
 
     while(mem_info_ptr < (unsigned int *)mbi->mmap_addr+mbi->mmap_length)
     {
@@ -50,28 +90,4 @@ void kmain(void* mbd, unsigned int magic)
       mem_info_ptr += cur->size + sizeof(cur->size);
     }
   }
-
-  pic_init();
-  init_pit(100);
-  enable_interupts(); //hardware interupts are now enabled
-  random_screen();
-
-  for(;;)
-    halt();
-}
-
-void banner()
-{
-  vga_set_color(COLOR_WHITE, COLOR_DONTCARE);
-  printf("              ____  _____\n");
-  printf("       __  __/ __ \\/ ___/\n");
-  printf("      / / / / / / /\\___ \\\n");
-  printf("     / /_/ / /_/ /____/ /\n");
-  printf("    / ____/\\____/______/\n");
-  printf("   / /\n");
-  printf("  /_/  Micro Operating System\n");
-  printf("          By Grant Hernandez\n");
-  
-  printf("\nBuilt on %s at %s\n\n", __DATE__, __TIME__);
-  vga_set_color(COLOR_LGREY, COLOR_DONTCARE);
 }

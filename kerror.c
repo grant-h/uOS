@@ -48,18 +48,22 @@ char * exception_strings[] = { "Divide Error",
 
 void panic(char * reason, ...)
 {
+  //we will never leave this function...
   disable_interupts();
 
   va_list args;
-  char buf[256]; //FIXME: still a hack...
-  
+
   va_start(args, reason);
+
   printf("[PANIC] Halt and catch fire\n");
-  sprintf(buf, "Reason: %s\n", reason);
-  vprintf(buf, args);
+  printf("Reason: ");
+
+  vprintf(reason, args);
+
+  printf("\n");
 
   for(;;)
-    halt();
+    halt(); //goodbye
 }
 
 void handle_exception(struct registers reg)

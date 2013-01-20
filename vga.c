@@ -17,8 +17,8 @@
 
 #define VGA_COMMAND_PORT 0x3D4
 #define VGA_DATA_PORT 0x3D5
-#define VGA_LOW_INDEX_REG 0xF
 #define VGA_HIGH_INDEX_REG 0xE
+#define VGA_LOW_INDEX_REG 0xF
 
 static unsigned int vga_row = 0, vga_col = 0;
 static uint8 attr_fg = COLOR_LGREY, attr_bg = COLOR_BLUE;
@@ -84,9 +84,13 @@ void vga_kputc(unsigned char c)
 
 void update_cursor()
 {
-  unsigned short pos = vga_row*COLUMNS + vga_col;
-  //TODO do out byte
-  pos = pos;
+  uint8 pos = vga_row*COLUMNS + vga_col;
+
+  outb(VGA_COMMAND_PORT, VGA_HIGH_INDEX_REG); //send the HIGH byte
+  outb(VGA_DATA_PORT, (pos >> 4) & 0xFF);
+
+  outb(VGA_COMMAND_PORT, VGA_LOW_INDEX_REG); //send the LOW byte
+  outb(VGA_DATA_PORT, pos & 0xFF);
 }
 
 void clear_row(int row)

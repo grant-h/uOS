@@ -2,6 +2,7 @@
 #include <i8259.h>
 #include <irq.h>
 #include <print.h>
+#include <kerror.h>
 #include <assembly.h>
 
 uint32 tick_count = 0;
@@ -11,7 +12,7 @@ void timer_tick(struct registers reg)
 {
   tick_count++;
 
-  /*if(tick_count % tick_hz == 0)
+  if(tick_count % tick_hz == 0)
   {
     int secondsElapsed = tick_count / tick_hz; 
 
@@ -19,7 +20,12 @@ void timer_tick(struct registers reg)
       printf("%d", secondsElapsed);
     else
       printf(".");
-  }*/
+
+    if(secondsElapsed == 7)
+    {
+      //int die = 10 / 0;
+    }
+  }
 }
 
 uint32 get_tick_count()

@@ -2,11 +2,10 @@ CC=i686-pc-linux-gnu-gcc
 LD=i686-pc-linux-gnu-ld
 ASM=nasm
 
-LIBGCC_FILE=/usr/lib/gcc/i686-pc-linux-gnu/4.5.3/libgcc.a
 LINKING_INFO=linker.ld
 
 ASMFLAGS=-f elf
-LDFLAGS=-g -T $(LINKING_INFO) -Map kernel.map
+LDFLAGS=-g -T $(LINKING_INFO) -L$(CURDIR)/lib/ -Map kernel.map
 CFLAGS=-I$(CURDIR)/include/ -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
 
 CSRC=kernel.o vga.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o irq.o i8259.o pit.o
@@ -23,7 +22,7 @@ all: $(EXECUTABLE)
 #linking stage. All objects required to be compiled.
 #Linking info required as well
 $(EXECUTABLE): $(SOURCES)
-	$(LD) $(LDFLAGS) $(SOURCES) -o $(EXECUTABLE) $(LIBGCC_FILE)
+	$(LD) $(LDFLAGS) $(SOURCES) -o $(EXECUTABLE) -lgcc
 
 #Compiling C and Assembly files
 #All C/Asm files required to be present

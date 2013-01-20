@@ -10,9 +10,10 @@ void irq_handler(struct registers regs)
 {
   ASSERT(regs.int_no >= IRQ_BASE);
 
-  unsigned char irq_num = regs.int_no - IRQ_BASE; //IRQ_BASE is the start vector of the IRQs
+  //IRQ_BASE is the start vector of the IRQs
+  unsigned char irq_num = regs.int_no - IRQ_BASE; 
 
-  void (* handler)(struct registers) = irq_handlers[regs.int_no - IRQ_BASE];
+  void (* handler)(struct registers) = irq_handlers[irq_num];
 
   if(handler)
     handler(regs);
@@ -22,7 +23,9 @@ void irq_handler(struct registers regs)
 
 void register_irq_handler(uint32 irq, void (*handler)(struct registers))
 {
-  irq -= IRQ_BASE; //XXX: nasty hack, yuck
+  ASSERT(irq >= IRQ_BASE);
+
+  irq -= IRQ_BASE; //0 index the irq parameter 
 
   printf("IRQ%d: registered\n", irq);
 
