@@ -1,2 +1,0 @@
--Find how the linux kernel does printk and emulate it!
--Make panic() have vararg support (backend with vprint)

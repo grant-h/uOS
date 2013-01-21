@@ -1,6 +1,10 @@
+# uOS Primary Makefile
 CC=i686-pc-linux-gnu-gcc
 LD=i686-pc-linux-gnu-ld
 ASM=nasm
+
+VPATH=src asm
+BUILD_DIR=build
 
 LINKING_INFO=linker.ld
 
@@ -11,29 +15,36 @@ CFLAGS=-I$(CURDIR)/include/ -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -n
 CSRC=kernel.o vga.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o irq.o i8259.o pit.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
-OBJECTS=$(SOURCES)
-#OBJECTS=$(CSRC:.c=.o) $(ASRC:.s=.o)
-EXECUTABLE=kernel.bin
+OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 
+EXECUTABLE=boot/kernel.bin
 
 
-.PHONY: all
+.PHONY: all clean
 all: $(EXECUTABLE)
 
 #linking stage. All objects required to be compiled.
 #Linking info required as well
-$(EXECUTABLE): $(SOURCES)
-	$(LD) $(LDFLAGS) $(SOURCES) -o $(EXECUTABLE) -lgcc
+
+$(EXECUTABLE) : $(BUILD_DIR) $(OBJECTS) 
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $(EXECUTABLE) -lgcc
+
+#Make sure our build directory is created
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 #Compiling C and Assembly files
 #All C/Asm files required to be present
 #A check for headers can be added later
-.s.o:
-	$(ASM) $(ASMFLAGS) $< 
-.c.o:
-	$(CC) $(CFLAGS) -c $< 
+
+$(BUILD_DIR)/%.o : %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: %.s
+	$(ASM) $(ASMFLAGS) $< -o $@
 
 #BE CAREFUL!
-.PHONY: clean
 clean: 
 	-rm -f $(OBJECTS) $(EXECUTABLE)
+	-rmdir $(BUILD_DIR)/
 	-rm -f kernel.map
+	-rm -f boot/kernel.img
