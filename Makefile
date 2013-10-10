@@ -12,7 +12,19 @@ ASMFLAGS=-f elf
 LDFLAGS=-g -T $(LINKING_INFO) -L$(CURDIR)/lib/ -Map kernel.map
 CFLAGS=-I$(CURDIR)/include/ -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
 
-CSRC=kernel.o vga.o assembly.o string.o gdt.o idt.o isr.o kerror.o print.o irq.o i8259.o pit.o
+CSRC=kernel.o \
+     vga.o \
+     assembly.o \
+     string.o \
+     gdt.o \
+     idt.o \
+     isr.o \
+     kerror.o \
+     print.o \
+     irq.o \
+     i8259.o \
+     pit.o \
+     kheap.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 

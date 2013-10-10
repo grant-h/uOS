@@ -9,13 +9,15 @@
 
 enum irq_vectors
 {
-IRQ0 = IRQ_BASE,
-IRQ1, IRQ2, IRQ3, IRQ4, IRQ5, IRQ6, IRQ7, IRQ8, IRQ9, IRQ10, IRQ11,
-IRQ12, IRQ13, IRQ14, IRQ15
+IRQ0 = 0,
+IRQ1, IRQ2, IRQ3, IRQ4, 
+IRQ5, IRQ6, IRQ7, IRQ8,
+IRQ9, IRQ10, IRQ11,IRQ12,
+IRQ13, IRQ14, IRQ15
 };
 
 void irq_handler(struct registers regs);
-void register_irq_handler(uint32 irq, void (*handler)(struct registers));
-void unregister_irq_handler(uint32 irq);
+void register_irq_handler(unsigned int irq, void (*handler)(struct registers));
+void unregister_irq_handler(unsigned int irq);
 
 #endif

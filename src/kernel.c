@@ -2,6 +2,7 @@
 #include <print.h>
 #include <boot/multiboot.h>
 #include <kerror.h>
+#include <kheap.h>
 #include <vga.h>
 #include <isr.h>
 #include <pit.h>
@@ -25,7 +26,7 @@ void kmain(void * mbd, unsigned int magic)
   }
 
 
-  printf("Using standard 80x25 vga text mode\n");
+  //printf("Using standard 80x25 vga text mode\n");
   print_multiboot(mbd);
 
   pic_init();
@@ -71,12 +72,15 @@ void print_multiboot(void * mbInfo)
   if(mbi->flags & MULTIBOOT_INFO_MEMORY)
   {
     unsigned int total_mem = mbi->mem_lower + mbi->mem_upper; 
-    printf("Total Memory %d KiB: mem_lower = %d KiB, mem_upper = %d KiB\n", total_mem, mbi->mem_lower, mbi->mem_upper);
+    printf("Total Memory %d KiB: mem_lower = %d KiB, mem_upper = %d KiB\n", total_mem, 
+                                                                            mbi->mem_lower, 
+                                                                            mbi->mem_upper);
   }
 
   if(mbi->flags & MULTIBOOT_INFO_MEM_MAP)
   {
     unsigned int * mem_info_ptr = (unsigned int *)mbi->mmap_addr; 
+    int inited = 0;
 
     printf("Tentative Memory Map\n");
 
@@ -85,7 +89,16 @@ void print_multiboot(void * mbInfo)
       multiboot_memory_map_t * cur = (multiboot_memory_map_t *)mem_info_ptr;   
 
       if(cur->len > 0)
-        printf("  [%p-%p %5s]\n", (uint32)cur->addr, (uint32)(cur->addr+cur->len), cur->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVAIL" : "RESVD");
+        printf("  [%p-%p %5s]\n", (uint32)cur->addr, 
+                                  (uint32)(cur->addr+cur->len), 
+                                  cur->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVAIL" : "RESVD");
+
+      //XXX: actually get a reliable memory map in to this
+      if(cur->type == MULTIBOOT_MEMORY_AVAILABLE) 
+      {
+        inited = 1;
+        kmalloc_early_init(cur->addr);
+      }
 
       mem_info_ptr += cur->size + sizeof(cur->size);
     }

@@ -33,7 +33,7 @@ void vga_init()
   //TODO: check for monochrome monitor (just for fun)
 
   clear_screen(); //screen is now in a known state
-  printf("VGA: Mode %dx%d, %s, attr fg:%#x bg:%#x\n", COLUMNS, ROWS, "color", attr_fg, attr_bg);
+  printf("VGA Init: Mode %dx%d, %s, attr fg:%#x bg:%#x\n", COLUMNS, ROWS, "color", attr_fg, attr_bg);
 }
 
 void vga_set_color(vga_color_t fg, vga_color_t bg)

@@ -24,6 +24,7 @@ void timer_tick(struct registers reg)
     if(secondsElapsed == 7)
     {
       //int die = 10 / 0;
+      //BREAKPOINT; 
     }
   }
 }

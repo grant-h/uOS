@@ -3,7 +3,7 @@
 #include <print.h>
 #include <kerror.h>
 
-void * irq_handlers[IRQ_AMOUNT] = {0};
+void * irq_handlers[IRQ_AMOUNT] = {NULL};
 
 // This gets called from our ASM interrupt handler stub.
 void irq_handler(struct registers regs)
@@ -21,20 +21,19 @@ void irq_handler(struct registers regs)
   pic_send_eoi(irq_num);
 } 
 
-void register_irq_handler(uint32 irq, void (*handler)(struct registers))
+void register_irq_handler(unsigned int irq, void (*handler)(struct registers))
 {
-  ASSERT(irq >= IRQ_BASE);
-
-  irq -= IRQ_BASE; //0 index the irq parameter 
+  ASSERT(irq < IRQ_AMOUNT);
 
   printf("IRQ%d: registered\n", irq);
 
   irq_handlers[irq] = handler;
 }
 
-void unregister_irq_handler(uint32 irq)
+void unregister_irq_handler(unsigned int irq)
 {
-  ASSERT(irq >= IRQ_AMOUNT);
+  ASSERT(irq < IRQ_AMOUNT);
+  ASSERT(irq_handlers[irq] != NULL); //prevent strange bugs
 
   irq_handlers[irq] = NULL;
 }

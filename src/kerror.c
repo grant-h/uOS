@@ -129,7 +129,7 @@ void panic_exception(struct registers reg)
   printf("[PANIC] Due to an unrecoverable exception\n\n");
   printf("Exception details:\n");
   printf("Panic called from ISR%d with error code %d\n", reg.int_no, reg.err_code);
-  printf("Fault occured at EIP %p, CS %p\n", reg.eip, reg.cs);
+  printf("Fault occured at EIP %p, CS 0x%04X\n", reg.eip, reg.cs);
 
   printf("Halting...");
 

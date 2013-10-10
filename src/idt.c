@@ -58,65 +58,27 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-//FIXME: there must be a better way!
+void (* INT_LIST[])(void) = {isr0, isr1, isr2, isr3, isr4, isr5, isr6, isr7, 
+                             isr8, isr9, isr10, isr11, isr12, isr13, isr14, 
+                             isr15, isr16, isr17, isr18, isr19,isr20, isr21, 
+                             isr22, isr23, isr24, isr25, isr26, isr27, isr28, 
+                             isr29, isr30, isr31, irq0, irq1, irq2, irq3, irq4,
+                             irq6, irq6, irq7, irq8, irq9, irq10, irq11, irq12,
+                             irq13, irq14, irq15};
+
+#define INT_LIST_LEN (sizeof(INT_LIST)/sizeof(INT_LIST[0]))
 
 void init_idt()
 {
+   unsigned int isr;
+
    idt_ptr.limit = sizeof(idt_entry_t) * 256 -1;
    idt_ptr.base  = (unsigned int)&idt_entries;
 
    memset(&idt_entries, 0, sizeof(idt_entry_t)*256);
 
-   //oh god the horror
-   idt_set_gate( 0, (unsigned int)isr0 , 0x08, 0x8E);
-   idt_set_gate( 1, (unsigned int)isr1 , 0x08, 0x8E);
-   idt_set_gate( 2, (unsigned int)isr2 , 0x08, 0x8E);
-   idt_set_gate( 3, (unsigned int)isr3 , 0x08, 0x8E);
-   idt_set_gate( 4, (unsigned int)isr4 , 0x08, 0x8E);
-   idt_set_gate( 5, (unsigned int)isr5 , 0x08, 0x8E);
-   idt_set_gate( 6, (unsigned int)isr6 , 0x08, 0x8E);
-   idt_set_gate( 7, (unsigned int)isr7 , 0x08, 0x8E);
-   idt_set_gate( 8, (unsigned int)isr8 , 0x08, 0x8E);
-   idt_set_gate( 9, (unsigned int)isr9 , 0x08, 0x8E);
-   idt_set_gate(10, (unsigned int)isr10, 0x08, 0x8E);
-   idt_set_gate(11, (unsigned int)isr11, 0x08, 0x8E);
-   idt_set_gate(12, (unsigned int)isr12, 0x08, 0x8E);
-   idt_set_gate(13, (unsigned int)isr13, 0x08, 0x8E);
-   idt_set_gate(14, (unsigned int)isr14, 0x08, 0x8E);
-   idt_set_gate(15, (unsigned int)isr15, 0x08, 0x8E);
-   idt_set_gate(16, (unsigned int)isr16, 0x08, 0x8E);
-   idt_set_gate(17, (unsigned int)isr17, 0x08, 0x8E);
-   idt_set_gate(18, (unsigned int)isr18, 0x08, 0x8E);
-   idt_set_gate(19, (unsigned int)isr19, 0x08, 0x8E);
-   idt_set_gate(20, (unsigned int)isr20, 0x08, 0x8E);
-   idt_set_gate(21, (unsigned int)isr21, 0x08, 0x8E);
-   idt_set_gate(22, (unsigned int)isr22, 0x08, 0x8E);
-   idt_set_gate(23, (unsigned int)isr23, 0x08, 0x8E);
-   idt_set_gate(24, (unsigned int)isr24, 0x08, 0x8E);
-   idt_set_gate(25, (unsigned int)isr25, 0x08, 0x8E);
-   idt_set_gate(26, (unsigned int)isr26, 0x08, 0x8E);
-   idt_set_gate(27, (unsigned int)isr27, 0x08, 0x8E);
-   idt_set_gate(28, (unsigned int)isr28, 0x08, 0x8E);
-   idt_set_gate(29, (unsigned int)isr29, 0x08, 0x8E);
-   idt_set_gate(30, (unsigned int)isr30, 0x08, 0x8E);
-   idt_set_gate(31, (unsigned int)isr31, 0x08, 0x8E);
-
-   idt_set_gate( IRQ0, (unsigned int)irq0 , 0x08, 0x8E);
-   idt_set_gate( IRQ1, (unsigned int)irq1 , 0x08, 0x8E);
-   idt_set_gate( IRQ2, (unsigned int)irq2 , 0x08, 0x8E);
-   idt_set_gate( IRQ3, (unsigned int)irq3 , 0x08, 0x8E);
-   idt_set_gate( IRQ4, (unsigned int)irq4 , 0x08, 0x8E);
-   idt_set_gate( IRQ5, (unsigned int)irq5 , 0x08, 0x8E);
-   idt_set_gate( IRQ6, (unsigned int)irq6 , 0x08, 0x8E);
-   idt_set_gate( IRQ7, (unsigned int)irq7 , 0x08, 0x8E);
-   idt_set_gate( IRQ8, (unsigned int)irq8 , 0x08, 0x8E);
-   idt_set_gate( IRQ9, (unsigned int)irq9 , 0x08, 0x8E);
-   idt_set_gate(IRQ10, (unsigned int)irq10, 0x08, 0x8E);
-   idt_set_gate(IRQ11, (unsigned int)irq11, 0x08, 0x8E);
-   idt_set_gate(IRQ12, (unsigned int)irq12, 0x08, 0x8E);
-   idt_set_gate(IRQ13, (unsigned int)irq13, 0x08, 0x8E);
-   idt_set_gate(IRQ14, (unsigned int)irq14, 0x08, 0x8E);
-   idt_set_gate(IRQ15, (unsigned int)irq15, 0x08, 0x8E);
+   for(isr = 0; isr < INT_LIST_LEN; isr++)
+     idt_set_gate(isr, (unsigned int)INT_LIST[isr], 0x08, 0x8E);
 
    idt_flush((unsigned int)&idt_ptr);
 }
