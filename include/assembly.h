@@ -9,11 +9,13 @@ struct registers
    unsigned int eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
 };
 
-void outb(unsigned short port, unsigned char value);
+#define FORCEINLINE __attribute__((always_inline))
+
+void outb(unsigned short port, unsigned char value) FORCEINLINE;
 unsigned char inb(unsigned short port);
 unsigned short inw(unsigned short port);
-void disable_interupts();
-void enable_interupts();
-void halt();
+void disable_interupts() FORCEINLINE;
+void enable_interupts() FORCEINLINE;
+void halt() FORCEINLINE;
 
 #endif

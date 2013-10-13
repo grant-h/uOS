@@ -10,7 +10,7 @@ LINKING_INFO=linker.ld
 
 ASMFLAGS=-f elf
 LDFLAGS=-g -T $(LINKING_INFO) -L$(CURDIR)/lib/ -Map kernel.map
-CFLAGS=-I$(CURDIR)/include/ -g -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
+CFLAGS=-I$(CURDIR)/include/ -ggdb -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
 
 CSRC=kernel.o \
      vga.o \
@@ -24,14 +24,15 @@ CSRC=kernel.o \
      irq.o \
      i8259.o \
      pit.o \
-     kheap.o
+     kheap.o \
+     memory.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 
 EXECUTABLE=boot/kernel.bin
 
 
-.PHONY: all clean
+.PHONY: all clean run
 all: $(EXECUTABLE)
 
 #linking stage. All objects required to be compiled.
@@ -60,3 +61,7 @@ clean:
 	-rmdir $(BUILD_DIR)/
 	-rm -f kernel.map
 	-rm -f boot/kernel.img
+
+# make sure everything is built first
+run : all
+	./run.sh	

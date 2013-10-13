@@ -36,6 +36,13 @@ void vga_init()
   printf("VGA Init: Mode %dx%d, %s, attr fg:%#x bg:%#x\n", COLUMNS, ROWS, "color", attr_fg, attr_bg);
 }
 
+/* TODO: This color setting interface is cumbersome
+ * for my application, it would be better if 
+ * color codes were inline with the text, such
+ * as traditional terminal coloring schemes
+ * Also, do I even care about the kernel having colors?
+ */
+
 void vga_set_color(vga_color_t fg, vga_color_t bg)
 {
   if(fg < COLOR_DONTCARE)

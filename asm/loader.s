@@ -9,7 +9,7 @@ FLAGS       equ  MODULEALIGN | MEMINFO  ; this is the Multiboot 'flag' field
 MAGIC       equ    0x1BADB002           ; 'magic number' lets bootloader find the header
 CHECKSUM    equ -(MAGIC + FLAGS)        ; checksum required
 
-section .__mbHeader ;this may save my ass from GRUB error 13
+section .__mbHeader ;this may save me from GRUB error 13
  
 align 4
     dd MAGIC
@@ -26,15 +26,14 @@ loader:
     push eax                            ; Multiboot magic number
     push ebx                            ; Multiboot info structure
  
-    call kmain                          ; call kernel proper
+    call kmain                          ; call kernel entry point 
  
-    cli
-.hang:
-    hlt                                 ; halt machine should kernel return
-    jmp  .hang
+.catchfire:
+    hlt                                 ; halt machine should the kernel return
+    jmp  .catchfire
  
 section .bss
  
 align 4
 stack:
-    resb STACKSIZE                      ; reserve 16k stack on a doubleword boundary
+    resb STACKSIZE                      ; reserve 16k stack on a DWORD boundary

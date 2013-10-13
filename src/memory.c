@@ -5,9 +5,9 @@
 #include <memory.h>
 
 // initialize the KERNEL_* convience variables
-// allows us forget about using address of all the time
-uint32 KERNEL_START = &_KERNEL_START;
-uint32 KERNEL_END = &_KERNEL_END;
+// allows us forget about using & all the time
+uint32 KERNEL_START = (uint32)&_KERNEL_START;
+uint32 KERNEL_END = (uint32)&_KERNEL_END;
 
 static uint32 * pageDirectory = 0;
 
@@ -28,7 +28,7 @@ void paging_init()
   // TODO: and place our kernel in the higher half
   
   // number of pages in 3 MB
-  uint32 toMap = PAGES_PER_MB(3);
+  uint32 toMap = PAGES_PER_MB(2);
   uint32 addr = 0;
 
   for(i = 0; i < toMap; i++)
@@ -40,7 +40,7 @@ void paging_init()
   unsigned int cr0;
   asm volatile("mov %0, %%cr3":: "b"(pageDirectory));
   asm volatile("mov %%cr0, %0": "=b"(cr0));
-  cr0 |= 0x80000000;
+  cr0 |= 0x80000000; //XXX XXX XXX XXX 
   asm volatile("mov %0, %%cr0":: "b"(cr0)); // brace yourself
 }
 
@@ -59,8 +59,11 @@ uint32 page_map(uint32 virt, uint32 phys)
   ASSERT(!(virt & NOT_ALIGNED || phys & NOT_ALIGNED));
   ASSERT(pageDirectory);
 
-  uint8 pageDirI = virt / (1024*1024);
-  uint8 pageTableI = virt / 1024;
+  //printf("page_map: %p -> %p\n", virt, phys);
+
+  uint32 index = virt / PAGE_SIZE;
+  uint32 pageDirI = (index / 1024) % 1024;
+  uint32 pageTableI = index % 1024;
 
   // if the page table isn't present, create it
   if(!(pageDirectory[pageDirI] & PAGE_ENTRY_PRESENT))
@@ -77,7 +80,9 @@ uint32 page_map(uint32 virt, uint32 phys)
 
     // add the page table to the directory and mark it as present
     // make sure to OR the assignment to preserve the flags
-    pageDirectory[pageDirI] |= *pageTable | PAGE_ENTRY_PRESENT;
+    pageDirectory[pageDirI] |= (uint32)pageTable | PAGE_ENTRY_PRESENT;
+
+    printf("page_map: table %u created at %p\n", pageDirI, pageTable);
   }
 
   // get our page table address
@@ -88,9 +93,12 @@ uint32 page_map(uint32 virt, uint32 phys)
   // OR on our physical address
   pageTable[pageTableI] |= phys; 
 
-  // if the entry wasn't present, great! just mark it as present and move on
-  if((pageTable[pageTableI] & PAGE_ENTRY_PRESENT))
-    pageTable[pageTableI] |= PAGE_ENTRY_PRESENT;
+  // mark the entry as present
+  pageTable[pageTableI] |= PAGE_ENTRY_PRESENT;
+
+  //printf("%p\n", pageTable[pageTableI]);
+
+  //printf("page_map: entry %u present at %p\n", pageTableI, (pageTable + pageTableI));
 
   return (uint32)&pageTable[pageTableI];
 }

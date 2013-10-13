@@ -9,41 +9,47 @@
 #include <i8259.h>
 
 void banner();
-void print_multiboot(void * mbInfo);
-
-void kmain(void * mbd, unsigned int magic)
+void print_multiboot(struct multiboot_info * mbi);
+   
+void kmain(struct multiboot_info * mbi, uint32 magic)
 {
   vga_init(); 
   banner();
-
-  init_desc_tables(); //get exception handling up quickly!
+  
+  // Initializes our IDT and GDT to get exception handling up quickly!
+  init_desc_tables();
 
   if(magic != MULTIBOOT_BOOTLOADER_MAGIC)
-  {
     panic("Kernel was not loaded using a multiboot compliant bootloader. Cannot continue" \
            " reliably without multiboot information. Halting...\n");
-    return; //never reached
-  }
+
+  
+
+  // quickly initialize our early kmalloc
+  kmalloc_early_init_grub(mbi);
+
+  // print some diagnostic info on grub's memory map
+  print_multiboot(mbi);
+  //printf("  [%p-%p KERNL]\n", &KERNEL_START, &KERNEL_END);
 
 
-  //printf("Using standard 80x25 vga text mode\n");
-  print_multiboot(mbd);
-
+  // Initialize the interrupt controller
   pic_init();
-  init_pit(100);
-  enable_interupts(); //hardware interupts are now enabled
+  // interface with the Programmable Interval Timer 
+  init_pit(100); // 100 Hz
+  enable_interupts(); // hardware interrupts are now enabled
 
-  for(;;)
-    halt();
+  // oh god
+  paging_init();
+
+  // become interrupt driven
+  for(;;) halt();
 }
 
 void banner()
 {
-  //this color setting interface is cumbersome
-  //for my application, it would be better if 
-  //color codes were inline with the text, such
-  //as traditional terminal coloring schemes
-  vga_set_color(COLOR_LRED, COLOR_DONTCARE);
+  // make the header stand out
+  vga_set_color(COLOR_WHITE, COLOR_DONTCARE);
   printf("              ____  _____\n");
   printf("       __  __/ __ \\/ ___/\n");
   printf("      / / / / / / /\\___ \\\n");
@@ -51,18 +57,14 @@ void banner()
   printf("    / ____/\\____/______/\n");
   printf("   / /\n");
   printf("  /_/  Micro Operating System\n");
-  vga_set_color(COLOR_GREEN, COLOR_DONTCARE);
   printf("          By Grant Hernandez\n");
   
-  vga_set_color(COLOR_WHITE, COLOR_DONTCARE);
   printf("\nBuilt on %s at %s\n\n", __DATE__, __TIME__);
   vga_set_color(COLOR_LGREY, COLOR_DONTCARE);
 }
 
-void print_multiboot(void * mbInfo)
+void print_multiboot(struct multiboot_info * mbi)
 {
-  struct multiboot_info * mbi = (struct multiboot_info *)mbInfo;
-   
   if(mbi == NULL)
   {
     printf("No multiboot information!\n");
@@ -80,7 +82,6 @@ void print_multiboot(void * mbInfo)
   if(mbi->flags & MULTIBOOT_INFO_MEM_MAP)
   {
     unsigned int * mem_info_ptr = (unsigned int *)mbi->mmap_addr; 
-    int inited = 0;
 
     printf("Tentative Memory Map\n");
 
@@ -92,13 +93,6 @@ void print_multiboot(void * mbInfo)
         printf("  [%p-%p %5s]\n", (uint32)cur->addr, 
                                   (uint32)(cur->addr+cur->len), 
                                   cur->type == MULTIBOOT_MEMORY_AVAILABLE ? "AVAIL" : "RESVD");
-
-      //XXX: actually get a reliable memory map in to this
-      if(cur->type == MULTIBOOT_MEMORY_AVAILABLE) 
-      {
-        inited = 1;
-        kmalloc_early_init(cur->addr);
-      }
 
       mem_info_ptr += cur->size + sizeof(cur->size);
     }
