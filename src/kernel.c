@@ -15,18 +15,21 @@ void kmain(struct multiboot_info * mbi, uint32 magic)
 {
   vga_init(); 
   banner();
-  
-  // Initializes our IDT and GDT to get exception handling up quickly!
-  init_desc_tables();
 
   if(magic != MULTIBOOT_BOOTLOADER_MAGIC)
     panic("Kernel was not loaded using a multiboot compliant bootloader. Cannot continue" \
            " reliably without multiboot information. Halting...\n");
 
+  ////////////////////
   
-
+  // Initializes our IDT and GDT to get exception handling up quickly!
+  init_desc_tables();
+  
   // quickly initialize our early kmalloc
   kmalloc_early_init_grub(mbi);
+
+  // oh god
+  paging_init();
 
   // print some diagnostic info on grub's memory map
   print_multiboot(mbi);
@@ -38,9 +41,6 @@ void kmain(struct multiboot_info * mbi, uint32 magic)
   // interface with the Programmable Interval Timer 
   init_pit(100); // 100 Hz
   enable_interupts(); // hardware interrupts are now enabled
-
-  // oh god
-  paging_init();
 
   // become interrupt driven
   for(;;) halt();

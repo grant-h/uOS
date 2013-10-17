@@ -5,7 +5,7 @@
 #include <kerror.h>
 #include <assembly.h>
 
-uint32 tick_count = 0;
+uint64 tick_count = 0;
 uint32 tick_hz = 0;
 
 void timer_tick(struct registers reg)
@@ -24,6 +24,12 @@ void timer_tick(struct registers reg)
     if(secondsElapsed == 7)
     {
       //int die = 10 / 0;
+      /*uint32 * pageFault = (uint32 *)0xc0000000;
+      *pageFault = 0xdeadbeefU;
+      uint32 heh = *pageFault;
+
+      printf("%p\n", heh);*/
+
       //BREAKPOINT; 
     }
   }

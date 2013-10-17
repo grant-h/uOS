@@ -1,4 +1,10 @@
 #!/bin/sh
+TARGET="boot/kernel.bin"
+
+# all commands now relative to script location
 cd $(dirname $0)
-# troll my kernel with low memory
-qemu-kvm -m 1.1 -kernel boot/kernel.bin
+
+# start qemu!
+qemu-kvm $@ -kernel $TARGET 
+
+exit 0

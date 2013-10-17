@@ -133,6 +133,5 @@ void panic_exception(struct registers reg)
 
   printf("Halting...");
 
-  for(;;) 
-    halt();
+  for(;;) halt();
 }

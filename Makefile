@@ -2,12 +2,12 @@
 CC=i686-pc-linux-gnu-gcc
 LD=i686-pc-linux-gnu-ld
 ASM=nasm
+QEMUOPT=-name uOS -m 32
 
 VPATH=src asm
 BUILD_DIR=build
 
 LINKING_INFO=linker.ld
-
 ASMFLAGS=-f elf
 LDFLAGS=-g -T $(LINKING_INFO) -L$(CURDIR)/lib/ -Map kernel.map
 CFLAGS=-I$(CURDIR)/include/ -ggdb -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
@@ -31,8 +31,7 @@ SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 
 EXECUTABLE=boot/kernel.bin
 
-
-.PHONY: all clean run
+.PHONY: all clean run debug
 all: $(EXECUTABLE)
 
 #linking stage. All objects required to be compiled.
@@ -64,4 +63,7 @@ clean:
 
 # make sure everything is built first
 run : all
-	./run.sh	
+	./run.sh $(QEMUOPT)
+
+debug : all
+	./debug.sh $(QEMUOPT)
