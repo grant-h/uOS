@@ -16,12 +16,17 @@ SECTIONS
     .data ALIGN (0x1000) : { *(.data) }
     .bss ALIGN (0x1000) :
     {
-        sbss = .; /* sbss and ebss allow us to easily zero the bss */
+        _BSS_START = .; /* sbss and ebss allow us to easily zero the bss */
         *(.bss)
         *(COMMON)
-        ebss = .;
+        _BSS_END = .;
     }
 
     /* Let the source know about the kernel end */
     _KERNEL_END = .;
+    _BSS_SIZE    = _BSS_END    - _BSS_START;
+    _KERNEL_SIZE = _KERNEL_END - _KERNEL_START;
 }
+
+ASSERT(_KERNEL_SIZE < 0x300000, "Kernel exceeds the 3 MB limit. asm/loader.s must be updated to work with a >3MB kernel");
+

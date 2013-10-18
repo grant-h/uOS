@@ -39,17 +39,17 @@ void pic_init()
 {
   unsigned char a1, a2;
 
-  //a1 = inb(PIC_MASTER_DATA);                        // save masks
+  //a1 = inb(PIC_MASTER_DATA);                // save masks
   //a2 = inb(PIC_SLAVE_DATA);
 
   outb(PIC_MASTER_CMD, ICW1_INIT+ICW1_ICW4);  // starts the initialization sequence (in cascade mode)
   outb(PIC_SLAVE_CMD, ICW1_INIT+ICW1_ICW4);
-  outb(PIC_MASTER_DATA, 0x20);                 // ICW2: Master PIC vector offset
+  outb(PIC_MASTER_DATA, 0x20);                // ICW2: Master PIC vector offset
   outb(PIC_SLAVE_DATA, 0x28);                 // ICW2: Slave PIC vector offset
-  outb(PIC_MASTER_DATA, 4);                       // ICW3: tell Master PIC that there is a slave PIC at IRQ2 (0000 0100)
-  outb(PIC_SLAVE_DATA, 2);                       // ICW3: tell Slave PIC its cascade identity (0000 0010)
+  outb(PIC_MASTER_DATA, 4);                   // ICW3: tell Master PIC that there is a slave PIC at IRQ2 (0000 0100)
+  outb(PIC_SLAVE_DATA, 2);                    // ICW3: tell Slave PIC its cascade identity (0000 0010)
 
-  outb(PIC_MASTER_DATA, ICW4_8086);        // ICW4: 8086 extra hint
+  outb(PIC_MASTER_DATA, ICW4_8086);           // ICW4: 8086 extra hint
   outb(PIC_SLAVE_DATA, ICW4_8086);
 
   outb(PIC_MASTER_DATA, 0);

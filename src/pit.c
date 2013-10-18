@@ -21,7 +21,7 @@ void timer_tick(struct registers reg)
     else
       printf(".");
 
-    if(secondsElapsed == 7)
+    if(secondsElapsed == 20)
     {
       //int die = 10 / 0;
       /*uint32 * pageFault = (uint32 *)0xc0000000;
@@ -31,6 +31,10 @@ void timer_tick(struct registers reg)
       printf("%p\n", heh);*/
 
       //BREAKPOINT; 
+    }
+    else if(secondsElapsed == 7)
+    {
+      //printf("%p", &secondsElapsed);
     }
   }
 }

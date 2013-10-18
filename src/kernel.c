@@ -29,7 +29,7 @@ void kmain(struct multiboot_info * mbi, uint32 magic)
   kmalloc_early_init_grub(mbi);
 
   // oh god
-  paging_init();
+  //paging_init();
 
   // print some diagnostic info on grub's memory map
   print_multiboot(mbi);

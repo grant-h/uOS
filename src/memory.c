@@ -11,7 +11,12 @@
 uint32 KERNEL_START = (uint32)&_KERNEL_START;
 uint32 KERNEL_END = (uint32)&_KERNEL_END;
 
+// stored Page Directory
 static uint32 * pageDirectory = 0;
+
+static void _native_set_page_directory(uint32 * phyDir);
+static void _native_paging_enable();
+static void _native_paging_disable();
 
 void paging_init()
 {

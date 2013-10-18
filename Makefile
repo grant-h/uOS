@@ -2,7 +2,7 @@
 CC=i686-pc-linux-gnu-gcc
 LD=i686-pc-linux-gnu-ld
 ASM=nasm
-QEMUOPT=-name uOS -m 32
+QEMUOPT=-name uOS -m 32 -no-reboot -d all
 
 VPATH=src asm
 BUILD_DIR=build
