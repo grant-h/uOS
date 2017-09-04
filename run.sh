@@ -1,10 +1,11 @@
 #!/bin/sh
+QEMU=qemu-system-i386
 TARGET="boot/kernel.bin"
 
 # all commands now relative to script location
 cd $(dirname $0)
 
 # start qemu!
-qemu-kvm $@ -kernel $TARGET 
+${QEMU} $@ -kernel $TARGET
 
 exit 0

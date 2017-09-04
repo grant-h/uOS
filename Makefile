@@ -1,6 +1,8 @@
 # uOS Primary Makefile
-CC=i686-pc-linux-gnu-gcc
-LD=i686-pc-linux-gnu-ld
+BUILD_MODE="DEBUG"
+
+CC=$(PREFIX)gcc
+LD=$(PREFIX)gcc
 ASM=nasm
 QEMUOPT=-name uOS -m 32 -no-reboot -d all
 
@@ -9,8 +11,60 @@ BUILD_DIR=build
 
 LINKING_INFO=linker.ld
 ASMFLAGS=-f elf
-LDFLAGS=-g -T $(LINKING_INFO) -L$(CURDIR)/lib/ -Map kernel.map
-CFLAGS=-I$(CURDIR)/include/ -ggdb -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
+GCC_KERNEL=-nostdlib \
+	   -nostdinc \
+	   -fno-builtin \
+	   -nostartfiles \
+	   -nodefaultlibs
+
+ifeq ($(BUILD_MODE), "DEBUG")
+LDFLAGS=-Wl,-m,elf_i386 \
+	-Wl,-Map,kernel.map \
+	-ggdb \
+	-T $(LINKING_INFO) \
+	-L$(CURDIR)/lib/ \
+	$(GCC_KERNEL)
+
+CFLAGS=-m32 \
+       -I$(CURDIR)/include/ \
+       -ggdb \
+       -Wall \
+       -Wextra \
+       $(GCC_KERNEL)
+else ifeq ($(BUILD_MODE), "QUICK")
+LDFLAGS=-O1 \
+	-Wl,-m,elf_i386 \
+	-T $(LINKING_INFO) \
+	-L$(CURDIR)/lib/ \
+	$(GCC_KERNEL)
+
+CFLAGS=-O1 \
+       -m32 \
+       -I$(CURDIR)/include/ \
+       -Wall \
+       -Wextra \
+       $(GCC_KERNEL)
+else ifeq ($(BUILD_MODE), "RELEASE_LTO")
+LDFLAGS=-O2 \
+	-flto \
+	-fwhole-program \
+	-Wl,-m,elf_i386 \
+	-Wl,-Map,kernel.map \
+	-T $(LINKING_INFO) \
+	-L$(CURDIR)/lib/ \
+	$(GCC_KERNEL)
+CFLAGS=-O2 \
+       -flto \
+       -fwhole-program \
+       -m32 \
+       -I$(CURDIR)/include/ \
+       -Wall \
+       -Wextra \
+       -Werror \
+       -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs
+else
+$(error "Unknown build mode")
+endif
 
 CSRC=kernel.o \
      vga.o \
@@ -40,9 +94,10 @@ all: $(EXECUTABLE)
 $(EXECUTABLE) : $(BUILD_DIR) $(OBJECTS) 
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $(EXECUTABLE) -lgcc
 
-#Make sure our build directory is created
+#Make sure our build and output directories are created
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+	mkdir -p boot/
 
 #Compiling C and Assembly files
 #All C/Asm files required to be present

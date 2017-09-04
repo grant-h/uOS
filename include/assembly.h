@@ -11,11 +11,11 @@ struct registers
 
 #define FORCEINLINE __attribute__((always_inline))
 
-void outb(unsigned short port, unsigned char value) FORCEINLINE;
+void outb(unsigned short port, unsigned char value);
 unsigned char inb(unsigned short port);
 unsigned short inw(unsigned short port);
-void disable_interupts() FORCEINLINE;
-void enable_interupts() FORCEINLINE;
-void halt() FORCEINLINE;
+void disable_interupts();
+void enable_interupts();
+void halt();
 
 #endif

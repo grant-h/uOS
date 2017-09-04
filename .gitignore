@@ -1,0 +1,10 @@
+# Temporary directories
+build/
+boot/
+
+# ELF map files
+*.map
+
+# Vim
+*.swo
+*.swp
