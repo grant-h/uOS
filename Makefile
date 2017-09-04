@@ -91,13 +91,12 @@ all: $(EXECUTABLE)
 #linking stage. All objects required to be compiled.
 #Linking info required as well
 
-$(EXECUTABLE) : $(BUILD_DIR) $(OBJECTS) 
+$(EXECUTABLE) : $(BUILD_DIR) $(OBJECTS) $(LINKING_INFO)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $(EXECUTABLE) -lgcc
 
 #Make sure our build and output directories are created
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-	mkdir -p boot/
+	mkdir -p $(BUILD_DIR) boot
 
 #Compiling C and Assembly files
 #All C/Asm files required to be present

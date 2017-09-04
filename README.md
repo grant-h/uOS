@@ -22,8 +22,7 @@ I opted to use NASM instead of GNU AS as I prefer its syntax. This may change in
 
 ```
 ~/code/uOS $ make
-kdir -p build
-mkdir -p boot/
+mkdir -p build boot
 gcc -m32 -I/home/digital/code/uOS/include/ -ggdb -Wall -Wextra -nostdlib -nostdinc -fno-builtin -nostartfiles -nodefaultlibs -c src/kernel.c -o build/kernel.o
 ...
 nasm -f elf asm/gdt_x86.s -o build/gdt_x86.o

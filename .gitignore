@@ -8,3 +8,6 @@ boot/
 # Vim
 *.swo
 *.swp
+
+# GDB History
+.gdb_history

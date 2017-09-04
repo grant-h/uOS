@@ -5,12 +5,16 @@ extern kmain                            ; kmain is defined in kernel.cpp
 ; used to relocate the kernel (virtually) and zero the BSS
 extern _KERNEL_START
 extern _KERNEL_END
-extern _KERNEL_SIZE
 extern _BSS_START
 extern _BSS_SIZE
 
+extern _EARLY_KERNEL_START
+extern _EARLY_KERNEL_END
+extern _EARLY_BSS_START
+extern _EARLY_BSS_SIZE
+
 KERNEL_BASE equ 0xC0000000
-LOWMEM_END  equ _KERNEL_END       ; lowmem ends at the 1st MB
+LOWMEM_END  equ _EARLY_KERNEL_END       ; lowmem ends at the 1st MB
 PAGE_SIZE   equ 4096
 PAGE_SHIFT  equ 12                ; 2^12 = 4096 = PAGE_SIZE
 PAGE_PERM   equ 3                 ; default page permissions: present, read/write
@@ -23,14 +27,17 @@ FLAGS       equ  MODULEALIGN | MEMINFO  ; this is the Multiboot 'flag' field
 MAGIC       equ  0x1BADB002             ; magic number lets bootloader find the header
 CHECKSUM    equ -(MAGIC + FLAGS)        ; checksum required
 
-section .__mbHeader ; explicitly give multiboot header a section
+; explicitly give multiboot header a section
+[section .__mbHeader]
 
 align 4
   dd MAGIC
   dd FLAGS
   dd CHECKSUM
 
-section .text
+;##########################################
+
+[section .early_text progbits]
 
 _start:
   ; save our multiboot information from grub before messing with registers
@@ -39,13 +46,12 @@ _start:
   mov [multiboot_info],  ebx
 
   ; zero the BSS to start things off well
-  mov ecx, _BSS_SIZE
-  ;mov eax, 3
+  mov ecx, _EARLY_BSS_SIZE
   xor al, al
-  mov edi, _BSS_START 
+  mov edi, _EARLY_BSS_START 
   rep stosb
 
-  ; identity map from 0x00000000 -> KERNEL_END
+  ; identity map from 0x00000000 -> EARLY_KERNEL_END
   ; WARNING: code assumes that the kernel won't be greater than 3MB
   mov eax, lowmem_pt
   mov [page_directory], eax
@@ -71,12 +77,15 @@ _start:
   mov [page_directory+edx*4], eax
   or dword [page_directory+edx*4], PAGE_PERM ; mark the PT as present
 
-  mov eax, _KERNEL_START ; the kernel's current physical start
+  mov eax, _KERNEL_START ; the kernel's current virtual start
   .higher:
   mov ecx, eax
   shr ecx, PAGE_SHIFT
   and ecx, 0x3ff
-  mov [kernel_pt+ecx*4], eax
+
+  mov ebx, eax 
+  sub ebx, KERNEL_BASE
+  mov [kernel_pt+ecx*4], ebx
   or dword [kernel_pt+ecx*4], PAGE_PERM
 
   add eax, PAGE_SIZE    ; move on to the next page
@@ -92,24 +101,19 @@ _start:
 
   ; adjust the stack in to the virtual area
   ; setup and adjust the stack 
-  mov  esp, stack + STACK_SIZE + KERNEL_BASE
+  mov  esp, stack + STACK_SIZE
 
   push dword [multiboot_magic]        ; Multiboot magic number
   push dword [multiboot_info]         ; Multiboot info structure
-  call kmain+KERNEL_BASE              ; call virtual kernel entry point 
+  call kmain                          ; call virtual kernel entry point 
 
   .catchfire:
   hlt                                 ; halt machine if the kernel returns (it won't)
   jmp short .catchfire
 
-section .data
+;###############################################
 
-multiboot_magic:
-  dd 0x0
-multiboot_info:
-  dd 0x0
-
-section .bss
+[section .early_bss nobits]
 
 ; NOTE THE USAGE OF ALIGNB (MUST BE USED IN BSS)
 alignb 4096          ; page align the page directory and tables
@@ -120,6 +124,15 @@ lowmem_pt:
 kernel_pt:
   resd 1024          ; our kernel page table mappings 
 
+[section .early_data]
+multiboot_magic:
+  dd 0
+multiboot_info:
+  dd 0
+
+;###############################################
+; This bss section is in the higher-half
+[section .bss]
 align 4
 stack:
   resb STACK_SIZE    ; reserve 16k stack on a DWORD boundary
