@@ -45,7 +45,7 @@ _start:
   mov [multiboot_magic], eax
   mov [multiboot_info],  ebx
 
-  ; zero the BSS to start things off well
+  ; zero the early BSS to start things off well
   mov ecx, _EARLY_BSS_SIZE
   xor al, al
   mov edi, _EARLY_BSS_START 
@@ -81,10 +81,10 @@ _start:
   .higher:
   mov ecx, eax
   shr ecx, PAGE_SHIFT
-  and ecx, 0x3ff
+  and ecx, 0x3ff ; generate kernel PTE index
 
   mov ebx, eax 
-  sub ebx, KERNEL_BASE
+  sub ebx, KERNEL_BASE ; convert virt->physical
   mov [kernel_pt+ecx*4], ebx
   or dword [kernel_pt+ecx*4], PAGE_PERM
 
@@ -98,6 +98,12 @@ _start:
   mov eax, cr0
   or eax, 0x80000000
   mov cr0, eax ; enable paging! make sure the next instruction fetch doesnt page fault
+
+  ; zero the kernel BSS
+  mov ecx, _BSS_SIZE
+  xor al, al
+  mov edi, _BSS_START 
+  rep stosb
 
   ; adjust the stack in to the virtual area
   ; setup and adjust the stack 
