@@ -19,13 +19,19 @@
 // page flags
 #define PAGE_ENTRY_PRESENT 0x1
 #define PAGE_ENTRY_RW      0x2
+#define PAGE_ENTRY_ACCESS  0x20
 
 // Information about the Kernel from the linker
 extern uint32 _KERNEL_START;
 extern uint32 _KERNEL_END;
+extern uint32 _EARLY_KMALLOC_START;
+extern uint32 _EARLY_KMALLOC_END;
+
 // Simplified storage varables (see memory.c)
 extern uint32 KERNEL_START;
 extern uint32 KERNEL_END;
+extern uint32 EARLY_KMALLOC_START;
+extern uint32 EARLY_KMALLOC_END;
 
 void paging_init();
 uint32 page_ident_map(uint32 addr, uint32 perm);

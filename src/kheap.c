@@ -23,7 +23,7 @@ void kmalloc_early_init(uint32 base, uint32 max)
 {
   ASSERT(base < max);
 
-  //printf("kmalloc_early base %p\n", base);
+  printf("kmalloc_early [%p, %p]\n", base, max);
   initialBase = currentBase = base;
   maxBase = max;
   initialized = 1;
@@ -50,8 +50,14 @@ int kmalloc_early_init_grub(struct multiboot_info * mbi)
       // choose the first memory location we find. don't worry about the size yet
       if(cur->type == MULTIBOOT_MEMORY_AVAILABLE && cur->len > 0) 
       {
-        //kmalloc_early_init(cur->addr, cur->addr+cur->len);
-        kmalloc_early_init(KERNEL_END, KERNEL_END+0x10000);
+        if(cur->addr == 0x0 && cur->len > PAGE_SIZE)
+        {
+          cur->addr += PAGE_SIZE;
+          cur->len -= PAGE_SIZE;
+        }
+
+        kmalloc_early_init(cur->addr, cur->addr+cur->len);
+        //kmalloc_early_init(0x0 KERNEL_END, 0xC0000000 + KERNEL_END+0x10000);
         return 1;
       }
 

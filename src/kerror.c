@@ -131,6 +131,17 @@ void panic_exception(struct registers reg)
   printf("Panic called from ISR%d with error code %d\n", reg.int_no, reg.err_code);
   printf("Fault occured at EIP %p, CS 0x%04X\n", reg.eip, reg.cs);
 
+  uint32 cr2;
+  asm volatile("mov %%cr2, %0": "=b" (cr2));
+
+  printf(
+    "EAX=%08x EBX=%08x ECX=%08x EDX=%08x\n"
+    "ESI=%08x EDI=%08x EBP=%08x ESP=%08x\n"
+    "EIP=%08x CR2=%08x\n",
+    reg.eax, reg.ebx, reg.ecx, reg.edx,
+    reg.esi, reg.edi, reg.ebp, reg.esp,
+    reg.eip, cr2);
+
   printf("Halting...");
 
   for(;;) halt();

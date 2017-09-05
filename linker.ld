@@ -38,6 +38,12 @@ SECTIONS
         *(COMMON)
         _BSS_END = .;
     }
+    .early_kmalloc ALIGN (0x1000) : AT(ADDR(.early_kmalloc) - 0xC0000000)
+    {
+        _EARLY_KMALLOC_START = .;
+        . += 0x100000; /* 1MB of heap space */
+        _EARLY_KMALLOC_END = .;
+    }
 
     /* Let the source know about the kernel end */
     _KERNEL_END = .;
