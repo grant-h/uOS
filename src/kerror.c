@@ -55,7 +55,7 @@ void panic(char * reason, ...)
 
   va_start(args, reason);
 
-  printf("[PANIC] Halt and catch fire\n");
+  printf("\n\n[PANIC] Halt and catch fire\n");
   printf("Reason: ");
 
   vprintf(reason, args);
@@ -71,8 +71,6 @@ void handle_exception(struct registers reg)
   int exCode = reg.int_no;
 
   ASSERT(exCode >= EXCEPT_DIV && exCode <= EXCEPT_SIMD);
-
-  printf("Exception: %s (INT %d)\n", exception_strings[exCode], exCode);
 
   switch (exCode)
   {
@@ -126,15 +124,18 @@ void panic_exception(struct registers reg)
 {
   disable_interupts();
 
-  printf("[PANIC] Due to an unrecoverable exception\n\n");
+  printf("\n\n[PANIC] Exception '%s' (%d)\n\n",
+      exception_strings[reg.int_no], reg.int_no);
+
   printf("Exception details:\n");
   printf("Panic called from ISR%d with error code %d\n", reg.int_no, reg.err_code);
-  printf("Fault occured at EIP %p, CS 0x%04X\n", reg.eip, reg.cs);
+  printf("Fault occured at EIP %p, CS 0x%04X\n\n", reg.eip, reg.cs);
 
   uint32 cr2;
   asm volatile("mov %%cr2, %0": "=b" (cr2));
 
-  printf(
+
+  printf("===== Register Dump =====\n"
     "EAX=%08x EBX=%08x ECX=%08x EDX=%08x\n"
     "ESI=%08x EDI=%08x EBP=%08x ESP=%08x\n"
     "EIP=%08x CR2=%08x\n",
