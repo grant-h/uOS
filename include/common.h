@@ -37,5 +37,16 @@ typedef unsigned short     uint16;
 typedef          short     int16;
 typedef unsigned char      uint8;
 typedef          char      int8;
+typedef uint32             size_t;
+
+// Calculate the offset in bytes of a struct member
+#define offsetof(type, member) ((size_t) &((type *)0)->member)
+
+// Retrieves the container object from a pointer to a struct member
+// __memb is not strictly required, but it allows the compiler to typecheck
+// It must be converted to a character pointer as offsetof() is in bytes
+#define container_of(ptr, type, member) ({              \
+  const typeof(((type *)0)->member) * __memb = (ptr);     \
+  (type *)((char *)__memb - offsetof(type, member)); })
 
 #endif

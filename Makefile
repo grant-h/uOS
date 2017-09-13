@@ -79,7 +79,8 @@ CSRC=kernel.o \
      i8259.o \
      pit.o \
      kheap.o \
-     memory.o
+     memory.o \
+     list.o
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 
