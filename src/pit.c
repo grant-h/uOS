@@ -8,7 +8,7 @@
 uint64 tick_count = 0;
 uint32 tick_hz = 0;
 
-void timer_tick(struct registers reg)
+void timer_tick(struct registers * reg)
 {
   tick_count++;
 

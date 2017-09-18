@@ -41,6 +41,9 @@ void kmain(struct multiboot_info * mbi, uint32 magic)
   init_pit(100); // 100 Hz
   enable_interupts(); // hardware interrupts are now enabled
 
+  extern struct driver_interface keyboard_driver;
+  register_driver(&keyboard_driver);
+
   // become interrupt driven
   for(;;) halt();
 }
@@ -73,9 +76,10 @@ void print_multiboot(struct multiboot_info * mbi)
   if(mbi->flags & MULTIBOOT_INFO_MEMORY)
   {
     unsigned int total_mem = mbi->mem_lower + mbi->mem_upper;
-    printf("Total Memory %d KiB: mem_lower = %d KiB, mem_upper = %d KiB\n", total_mem,
-                                                                            mbi->mem_lower,
-                                                                            mbi->mem_upper);
+    printf("Total Memory %d KiB: mem_lower = %d KiB, mem_upper = %d KiB\n", 
+        total_mem,
+        mbi->mem_lower,
+        mbi->mem_upper);
   }
 
   if(mbi->flags & MULTIBOOT_INFO_MEM_MAP)

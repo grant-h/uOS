@@ -6,9 +6,9 @@
 #include <gdt.h>
 #include <idt.h>
 
-void isr_handler(struct registers regs)
+void isr_handler(struct registers * regs)
 {
-  int int_no = regs.int_no;
+  int int_no = regs->int_no;
 
   if(int_no <= 19) //an exception has occured, panic!
     handle_exception(regs);

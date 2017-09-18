@@ -44,6 +44,6 @@ static void gdt_set_gate(uint32 num, uint32 base, uint32 limit, uint16 flags)
   //gdt_entries[num].limit_low = limit & 0x0000FFFF;
   //gdt_entries[num].base_low = base & 0x0000FFFF;
   //gdt_entries[num].base_middle = base & 0x00FF0000;
-  
+
   memcpy(&gdt_entries[num], &descriptor, sizeof(uint64));
 }

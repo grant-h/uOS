@@ -6,22 +6,24 @@
 void * irq_handlers[IRQ_AMOUNT] = {NULL};
 
 // This gets called from our ASM interrupt handler stub.
-void irq_handler(struct registers regs)
+void irq_handler(struct registers * regs)
 {
-  ASSERT(regs.int_no >= IRQ_BASE);
+  ASSERT(regs->int_no >= IRQ_BASE);
 
   //IRQ_BASE is the start vector of the IRQs
-  unsigned char irq_num = regs.int_no - IRQ_BASE; 
+  unsigned char irq_num = regs->int_no - IRQ_BASE; 
 
-  void (* handler)(struct registers) = irq_handlers[irq_num];
+  void (* handler)(struct registers *) = irq_handlers[irq_num];
 
   if(handler)
     handler(regs);
+  else
+    printf("[INFO] Unhandled IRQ %d\n", irq_num);
 
   pic_send_eoi(irq_num);
 } 
 
-void register_irq_handler(unsigned int irq, void (*handler)(struct registers))
+void register_irq_handler(unsigned int irq, void (*handler)(struct registers *))
 {
   ASSERT(irq < IRQ_AMOUNT);
 

@@ -7,7 +7,7 @@ ASM=nasm
 QEMUOPT=-name uOS -m 32 -no-reboot -d all
 
 VPATH=src asm
-BUILD_DIR=build
+BUILD_DIR=$(PWD)/build
 
 LINKING_INFO=linker.ld
 ASMFLAGS=-f elf
@@ -66,6 +66,8 @@ else
 $(error "Unknown build mode")
 endif
 
+export CFLAGS LDFLAGS
+
 CSRC=kernel.o \
      vga.o \
      assembly.o \
@@ -80,7 +82,10 @@ CSRC=kernel.o \
      pit.o \
      kheap.o \
      memory.o \
-     list.o
+     list.o \
+     drivers/driver.o \
+     drivers/keyboard.o
+
 ASRC=loader.o gdt_x86.o idt_x86.o
 SOURCES=$(CSRC) $(ASRC)
 OBJECTS=$(addprefix $(BUILD_DIR)/, $(SOURCES)) 
@@ -104,6 +109,7 @@ $(BUILD_DIR):
 #A check for headers can be added later
 
 $(BUILD_DIR)/%.o : %.c
+	if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.s

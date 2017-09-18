@@ -11,7 +11,6 @@ if(!(cond)) { \
 #define BREAKPOINT asm volatile("int $0x3")
         
 void panic(char * reason, ...);
-void handle_exception(struct registers reg);
-void panic_exception(struct registers reg);
+void handle_exception(struct registers * reg);
 
 #endif

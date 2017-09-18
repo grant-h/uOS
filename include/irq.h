@@ -16,8 +16,8 @@ IRQ9, IRQ10, IRQ11,IRQ12,
 IRQ13, IRQ14, IRQ15
 };
 
-void irq_handler(struct registers regs);
-void register_irq_handler(unsigned int irq, void (*handler)(struct registers));
+void irq_handler(struct registers * regs);
+void register_irq_handler(unsigned int irq, void (*handler)(struct registers *));
 void unregister_irq_handler(unsigned int irq);
 
 #endif

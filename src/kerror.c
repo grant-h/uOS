@@ -46,6 +46,8 @@ char * exception_strings[] = { "Divide Error",
                                "Machine Check",
                                "SIMD Floating-Point Exception" };
 
+static void panic_exception(struct registers * reg);
+
 void panic(char * reason, ...)
 {
   //we will never leave this function...
@@ -66,9 +68,9 @@ void panic(char * reason, ...)
     halt(); //goodbye
 }
 
-void handle_exception(struct registers reg)
+void handle_exception(struct registers * reg)
 {
-  int exCode = reg.int_no;
+  int exCode = reg->int_no;
 
   ASSERT(exCode >= EXCEPT_DIV && exCode <= EXCEPT_SIMD);
 
@@ -120,16 +122,16 @@ void handle_exception(struct registers reg)
 }
 
 
-void panic_exception(struct registers reg)
+void panic_exception(struct registers * reg)
 {
   disable_interupts();
 
   printf("\n\n[PANIC] Exception '%s' (%d)\n\n",
-      exception_strings[reg.int_no], reg.int_no);
+      exception_strings[reg->int_no], reg->int_no);
 
   printf("Exception details:\n");
-  printf("Panic called from ISR%d with error code %d\n", reg.int_no, reg.err_code);
-  printf("Fault occured at EIP %p, CS 0x%04X\n\n", reg.eip, reg.cs);
+  printf("Panic called from ISR%d with error code %d\n", reg->int_no, reg->err_code);
+  printf("Fault occured at EIP %p, CS 0x%04X\n\n", reg->eip, reg->cs);
 
   uint32 cr2;
   asm volatile("mov %%cr2, %0": "=b" (cr2));
@@ -139,9 +141,9 @@ void panic_exception(struct registers reg)
     "EAX=%08x EBX=%08x ECX=%08x EDX=%08x\n"
     "ESI=%08x EDI=%08x EBP=%08x ESP=%08x\n"
     "EIP=%08x CR2=%08x\n",
-    reg.eax, reg.ebx, reg.ecx, reg.edx,
-    reg.esi, reg.edi, reg.ebp, reg.esp,
-    reg.eip, cr2);
+    reg->eax, reg->ebx, reg->ecx, reg->edx,
+    reg->esi, reg->edi, reg->ebp, reg->esp,
+    reg->eip, cr2);
 
   printf("Halting...");
 
